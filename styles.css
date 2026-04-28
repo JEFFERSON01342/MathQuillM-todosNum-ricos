@@ -12,7 +12,10 @@ body {
     color: white;
 }
 
+/* ===================== */
 /* SIDEBAR */
+/* ===================== */
+
 .sidebar {
     width: 250px;
     background: #1e293b;
@@ -42,16 +45,33 @@ body {
     margin-top: 50px;
 }
 
+/* BOTONES MENU */
 .menu-item {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #e2e8f0;
+    padding: 12px 15px;
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 15px;
     cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
 .menu-item:hover {
     background: #334155;
+    transform: translateX(3px);
+}
+
+.menu-item:active {
+    transform: scale(0.97);
+}
+
+.menu-item.active-btn {
+    background: #38bdf8;
+    color: #020617;
 }
 
 /* SUBMENUS */
@@ -66,6 +86,7 @@ body {
     max-height: 500px;
 }
 
+/* NIVELES */
 .submenu li .menu-item {
     padding-left: 30px;
 }
@@ -78,7 +99,7 @@ body {
 /* FLECHAS */
 .arrow {
     margin-left: auto;
-    transition: transform 0.3s;
+    transition: 0.3s;
 }
 
 .has-submenu.active > .menu-item .arrow {
@@ -90,19 +111,27 @@ body {
     display: none;
 }
 
-/* CONTENT */
+/* ===================== */
+/* CONTENIDO */
+/* ===================== */
+
 .content {
     flex: 1;
     padding: 20px;
+    overflow-y: auto;
 }
 
 /* TITULO */
 .title {
     margin-bottom: 25px;
     font-size: 28px;
+    font-weight: 600;
 }
 
+/* ===================== */
 /* TOOLBAR */
+/* ===================== */
+
 .toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -136,6 +165,7 @@ body {
     transform: scale(0.95);
 }
 
+/* BOTON CLEAR */
 .clear-btn {
     border-color: #ef4444;
 }
@@ -143,26 +173,33 @@ body {
 .clear-btn:hover {
     background: #ef4444;
     color: white;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
 }
 
-/* DIVIDER */
+/* DIVISOR */
 .divider {
     width: 1px;
     background: rgba(255,255,255,0.2);
 }
 
-/* MATH */
+/* ===================== */
+/* MATH FIELD */
+/* ===================== */
+
 .math-box {
     border: 2px solid #38bdf8;
     padding: 15px;
     border-radius: 10px;
-    background: #f8fafc; /* blanco suave */
+    background: #d1d2d2;
+    color: #0f172a;
     min-height: 50px;
-    color: #0f172a; /* texto oscuro */
     box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
 }
 
-/* PANELS */
+/* ===================== */
+/* PANELES */
+/* ===================== */
+
 .panels {
     display: flex;
     gap: 20px;
@@ -178,6 +215,58 @@ body {
     border-radius: 10px;
 }
 
+.panel h3 {
+    margin-bottom: 10px;
+}
+
 #math-preview {
     font-size: 22px;
+}
+
+/* ===================== */
+/* TABLA DE ITERACIONES */
+/* ===================== */
+
+.table-container {
+
+    margin-top: 15px;
+    overflow-x: auto;
+}
+
+table {
+    
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e293b;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th {
+    background: #38bdf8;
+    color: #020617;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+td {
+    padding: 8px;
+    text-align: center;
+    border-top: 1px solid #334155;
+}
+
+tr:hover {
+    background: #334155;
+}
+
+/* CONTENEDOR GENERAL MÁS ORDENADO */
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+/* SEPARACIÓN ENTRE BLOQUES */
+.panels {
+    margin-bottom: 30px;
 }
