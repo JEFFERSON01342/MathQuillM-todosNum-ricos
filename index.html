@@ -23,7 +23,6 @@
 
         <li><span>🏠</span> <span>Inicio</span></li>
 
-        <!-- MÉTODOS -->
         <li class="has-submenu">
             <div class="menu-item">
                 📘 <span>Métodos</span>
@@ -67,20 +66,34 @@
 
 <div class="content">
 
-    <h1>Editor Matemático</h1>
+    <h1 class="title">Editor Matemático</h1>
 
+    <!-- TOOLBAR -->
     <div class="toolbar">
-        <button onclick="insertCmd('\\frac')">a/b</button>
-        <button onclick="insertCmd('^')">x²</button>
-        <button onclick="insertCmd('\\sqrt')">√</button>
-        <button onclick="insertCmd('\\pi')">π</button>
-        <button onclick="insertCmd('\\sin')">sin</button>
-        <button onclick="insertCmd('\\cos')">cos</button>
-        <button onclick="insertCmd('\\tan')">tan</button>
+        <button onclick="insertCmd('\\frac')" title="Fracción">𝒂/𝒃</button>
+        <button onclick="insertCmd('^')" title="Potencia">x²</button>
+        <button onclick="insertCmd('\\sqrt')" title="Raíz">√</button>
+
+        <div class="divider"></div>
+
+        <button onclick="insertCmd('\\pi')" title="Pi">π</button>
+        <button onclick="insertText('e')" title="Euler">e</button>
+
+        <div class="divider"></div>
+
+        <button onclick="insertCmd('\\sin')" title="Seno">sin</button>
+        <button onclick="insertCmd('\\cos')" title="Coseno">cos</button>
+        <button onclick="insertCmd('\\tan')" title="Tangente">tan</button>
+
+        <div class="divider"></div>
+
         <button onclick="insertText('x')">x</button>
         <button onclick="insertText('+')">+</button>
         <button onclick="insertText('-')">-</button>
-        <button onclick="clearMath()">C</button>
+
+        <div class="divider"></div>
+
+        <button class="clear-btn" onclick="clearMath()">C</button>
     </div>
 
     <div id="math-field" class="math-box"></div>
