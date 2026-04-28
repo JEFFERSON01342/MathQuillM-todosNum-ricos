@@ -20,17 +20,23 @@
     <button class="toggle-btn" id="toggleBtn">≡</button>
 
     <ul class="menu">
-        <li title="Inicio">🏠 <span>Inicio</span></li>
 
-        <!-- MÉTODOS AHORA SEGUNDO -->
-        <li class="has-submenu" title="Métodos">
-            📘 <span>Métodos</span>
-            <span class="arrow">▸</span>
+        <li><span>🏠</span> <span>Inicio</span></li>
+
+        <!-- MÉTODOS -->
+        <li class="has-submenu">
+            <div class="menu-item">
+                📘 <span>Métodos</span>
+                <span class="arrow">▸</span>
+            </div>
 
             <ul class="submenu">
+
                 <li class="has-submenu">
-                    🔒 <span>Cerrados</span>
-                    <span class="arrow">▸</span>
+                    <div class="menu-item">
+                        🔒 <span>Cerrados</span>
+                        <span class="arrow">▸</span>
+                    </div>
 
                     <ul class="submenu">
                         <li>Bisección</li>
@@ -39,19 +45,23 @@
                 </li>
 
                 <li class="has-submenu">
-                    🔓 <span>Abiertos</span>
-                    <span class="arrow">▸</span>
+                    <div class="menu-item">
+                        🔓 <span>Abiertos</span>
+                        <span class="arrow">▸</span>
+                    </div>
 
                     <ul class="submenu">
                         <li>Newton Raphson</li>
                         <li>Secante</li>
                     </ul>
                 </li>
+
             </ul>
         </li>
 
-        <li title="Taylor">📈 <span>Taylor</span></li>
-        <li title="Configuración">⚙️ <span>Configuración</span></li>
+        <li><span>📈</span> <span>Taylor</span></li>
+        <li><span>⚙️</span> <span>Configuración</span></li>
+
     </ul>
 </div>
 
@@ -59,7 +69,6 @@
 
     <h1>Editor Matemático</h1>
 
-    <!-- TOOLBAR -->
     <div class="toolbar">
         <button onclick="insertCmd('\\frac')">a/b</button>
         <button onclick="insertCmd('^')">x²</button>
