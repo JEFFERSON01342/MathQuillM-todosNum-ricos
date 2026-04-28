@@ -21,69 +21,77 @@
 
     <ul class="menu">
 
-        <li><span>🏠</span> <span>Inicio</span></li>
+        <li>
+            <button class="menu-item">🏠 <span>Inicio</span></button>
+        </li>
 
         <li class="has-submenu">
-            <div class="menu-item">
+            <button class="menu-item">
                 📘 <span>Métodos</span>
                 <span class="arrow">▸</span>
-            </div>
+            </button>
 
             <ul class="submenu">
 
                 <li class="has-submenu">
-                    <div class="menu-item">
+                    <button class="menu-item">
                         🔒 <span>Cerrados</span>
                         <span class="arrow">▸</span>
-                    </div>
+                    </button>
 
                     <ul class="submenu">
-                        <li>Bisección</li>
-                        <li>Regla Falsa</li>
+                        <li><button class="menu-item">Bisección</button></li>
+                        <li><button class="menu-item">Regla Falsa</button></li>
                     </ul>
                 </li>
 
                 <li class="has-submenu">
-                    <div class="menu-item">
+                    <button class="menu-item">
                         🔓 <span>Abiertos</span>
                         <span class="arrow">▸</span>
-                    </div>
+                    </button>
 
                     <ul class="submenu">
-                        <li>Newton Raphson</li>
-                        <li>Secante</li>
+                        <li><button class="menu-item">Newton Raphson</button></li>
+                        <li><button class="menu-item">Secante</button></li>
+                        <li><button class="menu-item">Punto Fijo</button></li>
                     </ul>
                 </li>
 
             </ul>
         </li>
 
-        <li><span>📈</span> <span>Taylor</span></li>
-        <li><span>⚙️</span> <span>Configuración</span></li>
+        <li>
+            <button class="menu-item">📈 <span>Taylor</span></button>
+        </li>
+
+        <li>
+            <button class="menu-item">⚙️ <span>Configuración</span></button>
+        </li>
 
     </ul>
 </div>
 
 <div class="content">
 
-    <h1 class="title">Escriba su funcion aqui:</h1>
+    <h1 class="title">Editor Matemático</h1>
 
     <!-- TOOLBAR -->
     <div class="toolbar">
-        <button onclick="insertCmd('\\frac')" title="Fracción">𝒂/𝒃</button>
-        <button onclick="insertCmd('^')" title="Potencia">x²</button>
-        <button onclick="insertCmd('\\sqrt')" title="Raíz">√</button>
+        <button onclick="insertCmd('\\frac')">𝒂/𝒃</button>
+        <button onclick="insertCmd('^')">x²</button>
+        <button onclick="insertCmd('\\sqrt')">√</button>
 
         <div class="divider"></div>
 
-        <button onclick="insertCmd('\\pi')" title="Pi">π</button>
-        <button onclick="insertText('e')" title="Euler">e</button>
+        <button onclick="insertCmd('\\pi')">π</button>
+        <button onclick="insertText('e')">e</button>
 
         <div class="divider"></div>
 
-        <button onclick="insertCmd('\\sin')" title="Seno">sin</button>
-        <button onclick="insertCmd('\\cos')" title="Coseno">cos</button>
-        <button onclick="insertCmd('\\tan')" title="Tangente">tan</button>
+        <button onclick="insertCmd('\\sin')">sin</button>
+        <button onclick="insertCmd('\\cos')">cos</button>
+        <button onclick="insertCmd('\\tan')">tan</button>
 
         <div class="divider"></div>
 
@@ -96,9 +104,12 @@
         <button class="clear-btn" onclick="clearMath()">C</button>
     </div>
 
+    <!-- CAMPO MATHQUILL -->
     <div id="math-field" class="math-box"></div>
 
+    <!-- PANELES -->
     <div class="panels">
+
         <div class="panel">
             <h3>LaTeX</h3>
             <div id="latex-output"></div>
@@ -107,6 +118,19 @@
         <div class="panel">
             <h3>Vista Matemática</h3>
             <div id="math-preview"></div>
+        </div>
+
+    </div>
+
+    <!-- TABLA DE ITERACIONES -->
+    <div class="panel">
+        <h3>Iteraciones</h3>
+
+        <div class="table-container">
+            <table id="tabla-iteraciones">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
