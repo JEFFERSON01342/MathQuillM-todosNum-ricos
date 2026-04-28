@@ -17,6 +17,7 @@ body {
     width: 250px;
     background: #1e293b;
     transition: 0.3s;
+    position: relative;
 }
 
 .sidebar.collapsed {
@@ -61,12 +62,10 @@ body {
     background: #334155;
 }
 
-/* SUBMENÚ ACTIVO */
 .has-submenu.active > .submenu {
     max-height: 500px;
 }
 
-/* SUBNIVELES */
 .submenu li .menu-item {
     padding-left: 30px;
 }
@@ -97,25 +96,59 @@ body {
     padding: 20px;
 }
 
+/* TITULO */
+.title {
+    margin-bottom: 25px;
+    font-size: 28px;
+}
+
 /* TOOLBAR */
 .toolbar {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    padding: 15px;
+    border-radius: 12px;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    margin-bottom: 20px;
 }
 
 .toolbar button {
-    padding: 8px 12px;
-    border: 1px solid #38bdf8;
-    background: #1e293b;
-    color: white;
-    border-radius: 6px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    background: rgba(15, 23, 42, 0.8);
+    color: #e2e8f0;
     cursor: pointer;
+    transition: all 0.25s ease;
 }
 
 .toolbar button:hover {
     background: #38bdf8;
-    color: black;
+    color: #020617;
+    transform: translateY(-2px);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+}
+
+.toolbar button:active {
+    transform: scale(0.95);
+}
+
+.clear-btn {
+    border-color: #ef4444;
+}
+
+.clear-btn:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* DIVIDER */
+.divider {
+    width: 1px;
+    background: rgba(255,255,255,0.2);
 }
 
 /* MATH */
@@ -125,7 +158,6 @@ body {
     border-radius: 10px;
     background: #020617;
     min-height: 50px;
-    margin-top: 10px;
 }
 
 /* PANELS */
