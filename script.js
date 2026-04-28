@@ -3,11 +3,26 @@ document.getElementById("toggleBtn").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("collapsed");
 });
 
-// SUBMENUS
-document.querySelectorAll(".has-submenu").forEach(item => {
+// SUBMENUS (ACORDEÓN)
+document.querySelectorAll(".menu-item").forEach(item => {
     item.addEventListener("click", function (e) {
+
+        let parent = this.parentElement;
+
+        if (!parent.classList.contains("has-submenu")) return;
+
         e.stopPropagation();
-        this.classList.toggle("active");
+
+        // Cerrar otros al mismo nivel
+        let siblings = parent.parentElement.querySelectorAll(":scope > .has-submenu");
+        siblings.forEach(el => {
+            if (el !== parent) {
+                el.classList.remove("active");
+            }
+        });
+
+        // Toggle actual
+        parent.classList.toggle("active");
     });
 });
 
