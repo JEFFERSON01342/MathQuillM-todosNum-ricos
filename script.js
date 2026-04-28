@@ -3,7 +3,7 @@ document.getElementById("toggleBtn").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("collapsed");
 });
 
-// SUBMENUS (ACORDEÓN)
+// SUBMENUS
 document.querySelectorAll(".menu-item").forEach(item => {
     item.addEventListener("click", function (e) {
 
@@ -13,15 +13,11 @@ document.querySelectorAll(".menu-item").forEach(item => {
 
         e.stopPropagation();
 
-        // Cerrar otros al mismo nivel
         let siblings = parent.parentElement.querySelectorAll(":scope > .has-submenu");
         siblings.forEach(el => {
-            if (el !== parent) {
-                el.classList.remove("active");
-            }
+            if (el !== parent) el.classList.remove("active");
         });
 
-        // Toggle actual
         parent.classList.toggle("active");
     });
 });
