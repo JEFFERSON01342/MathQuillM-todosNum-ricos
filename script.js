@@ -19,13 +19,12 @@ function crearTabla(tipo) {
     let columnas = [];
 
     switch (tipo) {
-
         case "biseccion":
-            columnas = ["Iteración","a","c","b","f(a)","f(c)","f(b)","f(a)*f(c)","Ea","Er%"];
+            columnas = ["Iteración","a","c","b","f(a)","f(c)","f(b)","Ea","Er%"];
             break;
 
         case "reglaFalsa":
-            columnas = ["Iteración","a","b","f(a)","f(b)","c","f(c)","f(a)*f(c)","Er%"];
+            columnas = ["Iteración","a","b","f(a)","f(b)","c","f(c)","Er%"];
             break;
 
         case "newton":
@@ -41,84 +40,95 @@ function crearTabla(tipo) {
             break;
     }
 
-    // Crear encabezado
     let fila = "<tr>";
-    columnas.forEach(col => {
-        fila += `<th>${col}</th>`;
-    });
+    columnas.forEach(col => fila += `<th>${col}</th>`);
     fila += "</tr>";
 
     thead.innerHTML = fila;
 }
 
 // =====================
-// MENU + DETECCIÓN MÉTODO
+// MENU
 // =====================
 document.querySelectorAll(".menu-item").forEach(btn => {
     btn.addEventListener("click", function (e) {
 
-        let text = this.textContent.toLowerCase();
+        let text = this.innerText.toLowerCase();
 
-        // ACTIVAR TABLA SEGÚN MÉTODO
         if (text.includes("bisección")) crearTabla("biseccion");
         if (text.includes("regla falsa")) crearTabla("reglaFalsa");
         if (text.includes("newton")) crearTabla("newton");
         if (text.includes("secante")) crearTabla("secante");
         if (text.includes("punto fijo")) crearTabla("puntoFijo");
 
-        let parent = this.parentElement;
-
-        // BOTÓN ACTIVO
         document.querySelectorAll(".menu-item").forEach(b => b.classList.remove("active-btn"));
         this.classList.add("active-btn");
 
-        // SUBMENUS
+        let parent = this.parentElement;
+
         if (parent.classList.contains("has-submenu")) {
-
             e.stopPropagation();
-
-            let siblings = parent.parentElement.querySelectorAll(":scope > .has-submenu");
-            siblings.forEach(el => {
-                if (el !== parent) el.classList.remove("active");
-            });
-
             parent.classList.toggle("active");
         }
     });
 });
 
 // =====================
-// MATHQUILL
+// DESMOS
 // =====================
-var MQ = MathQuill.getInterface(2);
+let grafica = null;
+let cientifica = null;
 
-var mathField = MQ.MathField(document.getElementById("math-field"), {
-    handlers: {
-        edit: function () {
-            let latex = mathField.latex();
+window.addEventListener("load", function () {
 
-            document.getElementById("latex-output").textContent = latex;
-
-            document.getElementById("math-preview").innerHTML = `\\(${latex}\\)`;
-
-            MathJax.typeset();
-        }
+    if (typeof Desmos === "undefined") {
+        alert("Error cargando Desmos");
+        return;
     }
+
+    // =====================
+    // GRAFICADOR (SIN PANEL IZQUIERDO)
+    // =====================
+    grafica = Desmos.GraphingCalculator(
+        document.getElementById("grafica"),
+        {
+            keypad: false,
+            expressions: false,   // 🔴 oculta panel izquierdo
+            settingsMenu: false,
+            zoomButtons: true
+        }
+    );
+
+    // =====================
+    // CALCULADORA CIENTÍFICA
+    // =====================
+    cientifica = Desmos.ScientificCalculator(
+        document.getElementById("cientifica")
+    );
+
+    console.log("Desmos cargado correctamente ✅");
+
+    // =====================
+    // VINCULAR CIENTÍFICA → GRÁFICA
+    // =====================
+    cientifica.observeEvent('change', function () {
+
+        let estado = cientifica.getState();
+
+        if (
+            estado.expressions &&
+            estado.expressions.list.length > 0
+        ) {
+            let latex = estado.expressions.list[0].latex;
+
+            // Solo grafica si hay variable x
+            if (latex && latex.includes("x")) {
+                grafica.setExpression({
+                    id: 'funcion',
+                    latex: latex
+                });
+            }
+        }
+    });
+
 });
-
-// =====================
-// BOTONES TOOLBAR
-// =====================
-function insertCmd(cmd) {
-    mathField.cmd(cmd);
-    mathField.focus();
-}
-
-function insertText(text) {
-    mathField.write(text);
-    mathField.focus();
-}
-
-function clearMath() {
-    mathField.latex('');
-}
