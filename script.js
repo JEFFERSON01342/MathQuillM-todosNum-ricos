@@ -1,4 +1,11 @@
 // =====================
+// VARIABLES GLOBALES
+// =====================
+let grafica = null;
+let cientifica = null;
+let metodoActual = null;
+
+// =====================
 // SIDEBAR
 // =====================
 document.getElementById("toggleBtn").addEventListener("click", () => {
@@ -22,6 +29,10 @@ function crearTabla(tipo) {
         case "biseccion":
             columnas = ["Iteración","a","c","b","f(a)","f(c)","f(b)","Ea","Er%"];
             break;
+
+        case "reglaFalsa":
+            columnas = ["Iteración","a","b","f(a)","f(b)","c","f(c)","Er%"];
+            break;
     }
 
     let fila = "<tr>";
@@ -44,7 +55,7 @@ function mostrarInputs(tipo) {
     grupoB.style.display = "none";
     grupoX0.style.display = "none";
 
-    if (tipo === "biseccion") {
+    if (tipo === "biseccion" || tipo === "reglaFalsa") {
         grupoA.style.display = "block";
         grupoB.style.display = "block";
     }
@@ -59,8 +70,15 @@ document.querySelectorAll(".menu-item").forEach(btn => {
         let text = this.innerText.toLowerCase();
 
         if (text.includes("bisección")) {
+            metodoActual = "biseccion";
             crearTabla("biseccion");
             mostrarInputs("biseccion");
+        }
+
+        if (text.includes("regla falsa")) {
+            metodoActual = "reglaFalsa";
+            crearTabla("reglaFalsa");
+            mostrarInputs("reglaFalsa");
         }
 
         document.querySelectorAll(".menu-item").forEach(b => b.classList.remove("active-btn"));
@@ -77,9 +95,6 @@ document.querySelectorAll(".menu-item").forEach(btn => {
 // =====================
 // DESMOS
 // =====================
-let grafica = null;
-let cientifica = null;
-
 window.addEventListener("load", function () {
 
     if (typeof Desmos === "undefined") {
@@ -101,7 +116,9 @@ window.addEventListener("load", function () {
         document.getElementById("cientifica")
     );
 
-    // Vincular gráfica
+    console.log("Desmos listo ✅");
+
+    // Vincular científica → gráfica
     cientifica.observeEvent('change', function () {
 
         let estado = cientifica.getState();
@@ -120,39 +137,53 @@ window.addEventListener("load", function () {
 });
 
 // =====================
-// CONVERTIR LATEX → JS
+// LATEX → JS (CORREGIDO)
 // =====================
 function convertirLatexAJS(latex) {
 
     let expr = latex;
 
-    expr = expr.replace(/\\cdot/g, '*');
     expr = expr.replace(/\\left|\\right/g, '');
+
     expr = expr.replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)');
+    expr = expr.replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)');
+
+    // funciones
+    expr = expr.replace(/\\sin\s*([a-zA-Z0-9]+)/g, 'Math.sin($1)');
+    expr = expr.replace(/\\cos\s*([a-zA-Z0-9]+)/g, 'Math.cos($1)');
+    expr = expr.replace(/\\tan\s*([a-zA-Z0-9]+)/g, 'Math.tan($1)');
+    expr = expr.replace(/\\ln\s*([a-zA-Z0-9]+)/g, 'Math.log($1)');
+
+    expr = expr.replace(/\\sin\(([^)]*)\)/g, 'Math.sin($1)');
+    expr = expr.replace(/\\cos\(([^)]*)\)/g, 'Math.cos($1)');
+    expr = expr.replace(/\\tan\(([^)]*)\)/g, 'Math.tan($1)');
+    expr = expr.replace(/\\ln\(([^)]*)\)/g, 'Math.log($1)');
+
     expr = expr.replace(/\^/g, '**');
 
-    expr = expr.replace(/\\sin/g, 'Math.sin');
-    expr = expr.replace(/\\cos/g, 'Math.cos');
-    expr = expr.replace(/\\tan/g, 'Math.tan');
-    expr = expr.replace(/\\ln/g, 'Math.log');
-    expr = expr.replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)');
+    // multiplicación implícita
+    expr = expr.replace(/(\d)(x)/g, '$1*$2');
 
     return expr;
 }
 
 // =====================
-// EVALUAR FUNCIÓN
+// EVALUAR FUNCIÓN (SEGURA)
 // =====================
 function evaluarFuncion(expr, x) {
     try {
-        return Function("x", "return " + expr)(x);
+        let val = Function("x", "return " + expr)(x);
+
+        if (!isFinite(val)) return NaN;
+
+        return val;
     } catch {
         return NaN;
     }
 }
 
 // =====================
-// MÉTODO BISECCIÓN
+// BISECCIÓN (MEJORADO)
 // =====================
 function metodoBiseccion(latex, a, b) {
 
@@ -164,15 +195,19 @@ function metodoBiseccion(latex, a, b) {
     let fa = evaluarFuncion(expr, a);
     let fb = evaluarFuncion(expr, b);
 
-    if (fa * fb > 0) {
-        alert("No hay cambio de signo en el intervalo");
+    if (isNaN(fa) || isNaN(fb)) {
+        alert("Función inválida en ese intervalo");
         return;
     }
 
-    let c, fc;
-    let error = 100;
+    if (fa * fb > 0) {
+        alert("No hay cambio de signo");
+        return;
+    }
 
-    for (let i = 1; i <= 20; i++) {
+    let c, fc, error = 100;
+
+    for (let i = 1; i <= 50; i++) {
 
         let c_old = c;
 
@@ -183,7 +218,7 @@ function metodoBiseccion(latex, a, b) {
             error = Math.abs((c - c_old) / c) * 100;
         }
 
-        let fila = `
+        tbody.innerHTML += `
             <tr>
                 <td>${i}</td>
                 <td>${a.toFixed(6)}</td>
@@ -197,18 +232,71 @@ function metodoBiseccion(latex, a, b) {
             </tr>
         `;
 
-        tbody.innerHTML += fila;
-
-        if (Math.abs(fc) < 0.0001 || error < 0.0001) {
-            break;
-        }
+        if (Math.abs(fc) < 0.000001 || error < 0.000001) break;
 
         if (fa * fc < 0) {
-            b = c;
-            fb = fc;
+            b = c; fb = fc;
         } else {
-            a = c;
-            fa = fc;
+            a = c; fa = fc;
+        }
+    }
+}
+
+// =====================
+// REGLA FALSA
+// =====================
+function metodoReglaFalsa(latex, a, b) {
+
+    const tbody = document.querySelector("#tabla-iteraciones tbody");
+    tbody.innerHTML = "";
+
+    let expr = convertirLatexAJS(latex);
+
+    let fa = evaluarFuncion(expr, a);
+    let fb = evaluarFuncion(expr, b);
+
+    if (isNaN(fa) || isNaN(fb)) {
+        alert("Función inválida");
+        return;
+    }
+
+    if (fa * fb > 0) {
+        alert("No hay cambio de signo");
+        return;
+    }
+
+    let c, fc, error = 100;
+
+    for (let i = 1; i <= 50; i++) {
+
+        let c_old = c;
+
+        c = b - (fb * (a - b)) / (fa - fb);
+        fc = evaluarFuncion(expr, c);
+
+        if (i > 1) {
+            error = Math.abs((c - c_old) / c) * 100;
+        }
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${i}</td>
+                <td>${a.toFixed(6)}</td>
+                <td>${b.toFixed(6)}</td>
+                <td>${fa.toFixed(6)}</td>
+                <td>${fb.toFixed(6)}</td>
+                <td>${c.toFixed(6)}</td>
+                <td>${fc.toFixed(6)}</td>
+                <td>${i === 1 ? "-" : error.toFixed(4)}</td>
+            </tr>
+        `;
+
+        if (Math.abs(fc) < 0.000001 || error < 0.000001) break;
+
+        if (fa * fc < 0) {
+            b = c; fb = fc;
+        } else {
+            a = c; fa = fc;
         }
     }
 }
@@ -236,9 +324,15 @@ document.getElementById("btn-iterar").addEventListener("click", () => {
     let latex = estado.expressions.list[0].latex;
 
     if (!latex.includes("x")) {
-        alert("Debe contener x");
+        alert("La función debe tener x");
         return;
     }
 
-    metodoBiseccion(latex, a, b);
+    if (metodoActual === "biseccion") {
+        metodoBiseccion(latex, a, b);
+    }
+
+    if (metodoActual === "reglaFalsa") {
+        metodoReglaFalsa(latex, a, b);
+    }
 });
