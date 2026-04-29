@@ -137,7 +137,7 @@ window.addEventListener("load", function () {
 });
 
 // =====================
-// LATEX → JS (CORREGIDO)
+// LATEX → JS (ROBUSTO)
 // =====================
 function convertirLatexAJS(latex) {
 
@@ -148,27 +148,35 @@ function convertirLatexAJS(latex) {
     expr = expr.replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)');
     expr = expr.replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)');
 
-    // funciones
-    expr = expr.replace(/\\sin\s*([a-zA-Z0-9]+)/g, 'Math.sin($1)');
-    expr = expr.replace(/\\cos\s*([a-zA-Z0-9]+)/g, 'Math.cos($1)');
-    expr = expr.replace(/\\tan\s*([a-zA-Z0-9]+)/g, 'Math.tan($1)');
-    expr = expr.replace(/\\ln\s*([a-zA-Z0-9]+)/g, 'Math.log($1)');
+    // e^x
+    expr = expr.replace(/e\^{([^}]*)}/g, 'Math.exp($1)');
 
+    // funciones con paréntesis
     expr = expr.replace(/\\sin\(([^)]*)\)/g, 'Math.sin($1)');
     expr = expr.replace(/\\cos\(([^)]*)\)/g, 'Math.cos($1)');
     expr = expr.replace(/\\tan\(([^)]*)\)/g, 'Math.tan($1)');
     expr = expr.replace(/\\ln\(([^)]*)\)/g, 'Math.log($1)');
 
+    // funciones simples
+    expr = expr.replace(/\\sin\s*([a-zA-Z0-9]+)/g, 'Math.sin($1)');
+    expr = expr.replace(/\\cos\s*([a-zA-Z0-9]+)/g, 'Math.cos($1)');
+    expr = expr.replace(/\\tan\s*([a-zA-Z0-9]+)/g, 'Math.tan($1)');
+    expr = expr.replace(/\\ln\s*([a-zA-Z0-9]+)/g, 'Math.log($1)');
+
+    // potencias
     expr = expr.replace(/\^/g, '**');
 
-    // multiplicación implícita
+    // multiplicaciones implícitas
     expr = expr.replace(/(\d)(x)/g, '$1*$2');
+    expr = expr.replace(/(\d)\(/g, '$1*(');
+    expr = expr.replace(/\)(\d)/g, ')*$1');
+    expr = expr.replace(/x\(/g, 'x*(');
 
     return expr;
 }
 
 // =====================
-// EVALUAR FUNCIÓN (SEGURA)
+// EVALUAR FUNCIÓN
 // =====================
 function evaluarFuncion(expr, x) {
     try {
@@ -183,7 +191,7 @@ function evaluarFuncion(expr, x) {
 }
 
 // =====================
-// BISECCIÓN (MEJORADO)
+// BISECCIÓN
 // =====================
 function metodoBiseccion(latex, a, b) {
 
@@ -214,6 +222,11 @@ function metodoBiseccion(latex, a, b) {
         c = (a + b) / 2;
         fc = evaluarFuncion(expr, c);
 
+        if (isNaN(fc)) {
+            alert("La función se vuelve inválida durante la iteración");
+            return;
+        }
+
         if (i > 1) {
             error = Math.abs((c - c_old) / c) * 100;
         }
@@ -232,7 +245,7 @@ function metodoBiseccion(latex, a, b) {
             </tr>
         `;
 
-        if (Math.abs(fc) < 0.000001 || error < 0.000001) break;
+        if (Math.abs(fc) < 1e-6 || error < 1e-6) break;
 
         if (fa * fc < 0) {
             b = c; fb = fc;
@@ -274,6 +287,11 @@ function metodoReglaFalsa(latex, a, b) {
         c = b - (fb * (a - b)) / (fa - fb);
         fc = evaluarFuncion(expr, c);
 
+        if (isNaN(fc)) {
+            alert("La función se vuelve inválida durante la iteración");
+            return;
+        }
+
         if (i > 1) {
             error = Math.abs((c - c_old) / c) * 100;
         }
@@ -291,7 +309,7 @@ function metodoReglaFalsa(latex, a, b) {
             </tr>
         `;
 
-        if (Math.abs(fc) < 0.000001 || error < 0.000001) break;
+        if (Math.abs(fc) < 1e-6 || error < 1e-6) break;
 
         if (fa * fc < 0) {
             b = c; fb = fc;
