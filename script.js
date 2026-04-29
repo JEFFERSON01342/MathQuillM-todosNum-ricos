@@ -33,6 +33,10 @@ function crearTabla(tipo) {
         case "reglaFalsa":
             columnas = ["Iteración","a","b","f(a)","f(b)","c","f(c)","Er%"];
             break;
+
+        case "newton":
+            columnas = ["Iteración","xi","f(xi)","f'(xi)","Er%"];
+            break;
     }
 
     let fila = "<tr>";
@@ -59,6 +63,10 @@ function mostrarInputs(tipo) {
         grupoA.style.display = "block";
         grupoB.style.display = "block";
     }
+
+    if (tipo === "newton") {
+        grupoX0.style.display = "block";
+    }
 }
 
 // =====================
@@ -79,6 +87,12 @@ document.querySelectorAll(".menu-item").forEach(btn => {
             metodoActual = "reglaFalsa";
             crearTabla("reglaFalsa");
             mostrarInputs("reglaFalsa");
+        }
+
+        if (text.includes("newton")) {
+            metodoActual = "newton";
+            crearTabla("newton");
+            mostrarInputs("newton");
         }
 
         document.querySelectorAll(".menu-item").forEach(b => b.classList.remove("active-btn"));
@@ -137,36 +151,29 @@ window.addEventListener("load", function () {
 });
 
 // =====================
-// LATEX → JS (ROBUSTO)
+// LATEX → JS
 // =====================
 function convertirLatexAJS(latex) {
 
     let expr = latex;
 
     expr = expr.replace(/\\left|\\right/g, '');
-
     expr = expr.replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)');
     expr = expr.replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)');
-
-    // e^x
     expr = expr.replace(/e\^{([^}]*)}/g, 'Math.exp($1)');
 
-    // funciones con paréntesis
     expr = expr.replace(/\\sin\(([^)]*)\)/g, 'Math.sin($1)');
     expr = expr.replace(/\\cos\(([^)]*)\)/g, 'Math.cos($1)');
     expr = expr.replace(/\\tan\(([^)]*)\)/g, 'Math.tan($1)');
     expr = expr.replace(/\\ln\(([^)]*)\)/g, 'Math.log($1)');
 
-    // funciones simples
     expr = expr.replace(/\\sin\s*([a-zA-Z0-9]+)/g, 'Math.sin($1)');
     expr = expr.replace(/\\cos\s*([a-zA-Z0-9]+)/g, 'Math.cos($1)');
     expr = expr.replace(/\\tan\s*([a-zA-Z0-9]+)/g, 'Math.tan($1)');
     expr = expr.replace(/\\ln\s*([a-zA-Z0-9]+)/g, 'Math.log($1)');
 
-    // potencias
     expr = expr.replace(/\^/g, '**');
 
-    // multiplicaciones implícitas
     expr = expr.replace(/(\d)(x)/g, '$1*$2');
     expr = expr.replace(/(\d)\(/g, '$1*(');
     expr = expr.replace(/\)(\d)/g, ')*$1');
@@ -181,13 +188,24 @@ function convertirLatexAJS(latex) {
 function evaluarFuncion(expr, x) {
     try {
         let val = Function("x", "return " + expr)(x);
-
         if (!isFinite(val)) return NaN;
-
         return val;
     } catch {
         return NaN;
     }
+}
+
+// =====================
+// DERIVADA NUMÉRICA
+// =====================
+function derivadaNumerica(expr, x) {
+    let h = 1e-6;
+    let f1 = evaluarFuncion(expr, x + h);
+    let f2 = evaluarFuncion(expr, x - h);
+
+    if (isNaN(f1) || isNaN(f2)) return NaN;
+
+    return (f1 - f2) / (2 * h);
 }
 
 // =====================
@@ -203,13 +221,8 @@ function metodoBiseccion(latex, a, b) {
     let fa = evaluarFuncion(expr, a);
     let fb = evaluarFuncion(expr, b);
 
-    if (isNaN(fa) || isNaN(fb)) {
-        alert("Función inválida en ese intervalo");
-        return;
-    }
-
-    if (fa * fb > 0) {
-        alert("No hay cambio de signo");
+    if (isNaN(fa) || isNaN(fb) || fa * fb > 0) {
+        alert("Intervalo inválido");
         return;
     }
 
@@ -221,11 +234,6 @@ function metodoBiseccion(latex, a, b) {
 
         c = (a + b) / 2;
         fc = evaluarFuncion(expr, c);
-
-        if (isNaN(fc)) {
-            alert("La función se vuelve inválida durante la iteración");
-            return;
-        }
 
         if (i > 1) {
             error = Math.abs((c - c_old) / c) * 100;
@@ -268,13 +276,8 @@ function metodoReglaFalsa(latex, a, b) {
     let fa = evaluarFuncion(expr, a);
     let fb = evaluarFuncion(expr, b);
 
-    if (isNaN(fa) || isNaN(fb)) {
-        alert("Función inválida");
-        return;
-    }
-
-    if (fa * fb > 0) {
-        alert("No hay cambio de signo");
+    if (isNaN(fa) || isNaN(fb) || fa * fb > 0) {
+        alert("Intervalo inválido");
         return;
     }
 
@@ -286,11 +289,6 @@ function metodoReglaFalsa(latex, a, b) {
 
         c = b - (fb * (a - b)) / (fa - fb);
         fc = evaluarFuncion(expr, c);
-
-        if (isNaN(fc)) {
-            alert("La función se vuelve inválida durante la iteración");
-            return;
-        }
 
         if (i > 1) {
             error = Math.abs((c - c_old) / c) * 100;
@@ -320,17 +318,54 @@ function metodoReglaFalsa(latex, a, b) {
 }
 
 // =====================
+// NEWTON-RAPHSON
+// =====================
+function metodoNewton(latex, x0) {
+
+    const tbody = document.querySelector("#tabla-iteraciones tbody");
+    tbody.innerHTML = "";
+
+    let expr = convertirLatexAJS(latex);
+
+    let xi = x0;
+    let error = 100;
+
+    for (let i = 1; i <= 50; i++) {
+
+        let fxi = evaluarFuncion(expr, xi);
+        let dfxi = derivadaNumerica(expr, xi);
+
+        if (isNaN(fxi) || isNaN(dfxi) || dfxi === 0) {
+            alert("Error en cálculo (derivada o función)");
+            return;
+        }
+
+        let xi_next = xi - (fxi / dfxi);
+
+        if (i > 1) {
+            error = Math.abs((xi_next - xi) / xi_next) * 100;
+        }
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${i}</td>
+                <td>${xi.toFixed(6)}</td>
+                <td>${fxi.toFixed(6)}</td>
+                <td>${dfxi.toFixed(6)}</td>
+                <td>${i === 1 ? "-" : error.toFixed(4)}</td>
+            </tr>
+        `;
+
+        if (Math.abs(fxi) < 1e-6 || error < 1e-6) break;
+
+        xi = xi_next;
+    }
+}
+
+// =====================
 // BOTÓN ITERAR
 // =====================
 document.getElementById("btn-iterar").addEventListener("click", () => {
-
-    let a = parseFloat(document.getElementById("input-a").value);
-    let b = parseFloat(document.getElementById("input-b").value);
-
-    if (isNaN(a) || isNaN(b)) {
-        alert("Ingresa valores válidos");
-        return;
-    }
 
     let estado = cientifica.getState();
 
@@ -346,11 +381,34 @@ document.getElementById("btn-iterar").addEventListener("click", () => {
         return;
     }
 
-    if (metodoActual === "biseccion") {
-        metodoBiseccion(latex, a, b);
+    if (metodoActual === "biseccion" || metodoActual === "reglaFalsa") {
+
+        let a = parseFloat(document.getElementById("input-a").value);
+        let b = parseFloat(document.getElementById("input-b").value);
+
+        if (isNaN(a) || isNaN(b)) {
+            alert("Ingresa valores válidos");
+            return;
+        }
+
+        if (metodoActual === "biseccion") {
+            metodoBiseccion(latex, a, b);
+        }
+
+        if (metodoActual === "reglaFalsa") {
+            metodoReglaFalsa(latex, a, b);
+        }
     }
 
-    if (metodoActual === "reglaFalsa") {
-        metodoReglaFalsa(latex, a, b);
+    if (metodoActual === "newton") {
+
+        let x0 = parseFloat(document.getElementById("input-x0").value);
+
+        if (isNaN(x0)) {
+            alert("Ingresa x0");
+            return;
+        }
+
+        metodoNewton(latex, x0);
     }
 });
