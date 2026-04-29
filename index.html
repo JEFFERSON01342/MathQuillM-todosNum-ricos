@@ -13,6 +13,9 @@
 
 <body>
 
+<!-- ===================== -->
+<!-- SIDEBAR -->
+<!-- ===================== -->
 <div class="sidebar" id="sidebar">
     <button class="toggle-btn" id="toggleBtn">≡</button>
 
@@ -49,32 +52,78 @@
     </ul>
 </div>
 
+<!-- ===================== -->
+<!-- CONTENIDO PRINCIPAL -->
+<!-- ===================== -->
 <div class="content">
 
-    <h1 class="title">GeoMath - Calculadora y Graficador</h1>
+    <div class="main-layout">
 
-    <!-- 🧮 CALCULADORA CIENTÍFICA -->
-    <h2>🧮 Calculadora Científica</h2>
-    <div id="cientifica" style="width:100%; height:300px;"></div>
+        <!-- ===================== -->
+        <!-- IZQUIERDA -->
+        <!-- ===================== -->
+        <div class="left-panel">
 
-    <!-- 📊 GRAFICADOR -->
-    <h2 style="margin-top:20px;">📊 Graficador</h2>
-    <div id="grafica" style="width:100%; height:400px;"></div>
+            <h1 class="title">GeoMath - Calculadora y Graficador</h1>
 
-    <!-- 📋 TABLA -->
-    <div class="panel">
-        <h3>Iteraciones</h3>
+            <!-- CALCULADORA -->
+            <h2>🧮 Calculadora Científica</h2>
+            <div id="cientifica" class="box"></div>
 
-        <div class="table-container">
-            <table id="tabla-iteraciones">
-                <thead></thead>
-                <tbody></tbody>
-            </table>
+            <!-- GRAFICADOR -->
+            <h2>📊 Graficador</h2>
+            <div id="grafica" class="box"></div>
+
         </div>
+
+        <!-- ===================== -->
+        <!-- DERECHA -->
+        <!-- ===================== -->
+        <div class="right-panel">
+
+            <div class="panel">
+
+                <h3>Iteraciones</h3>
+
+                <!-- INPUTS DINÁMICOS -->
+                <div class="inputs-metodo" id="inputs-metodo">
+
+                    <div id="input-a-group">
+                        <label>a:</label>
+                        <input type="number" id="input-a">
+                    </div>
+
+                    <div id="input-b-group">
+                        <label>b:</label>
+                        <input type="number" id="input-b">
+                    </div>
+
+                    <div id="input-x0-group">
+                        <label>x₀:</label>
+                        <input type="number" id="input-x0">
+                    </div>
+
+                    <button id="btn-iterar">▶ Iterar</button>
+
+                </div>
+
+                <!-- TABLA -->
+                <div class="table-container">
+                    <table id="tabla-iteraciones">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
 
+<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
