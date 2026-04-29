@@ -7,11 +7,8 @@
 
     <link rel="stylesheet" href="styles.css">
 
-    <!-- MathQuill -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.css"/>
-
-    <!-- MathJax -->
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- DESMOS -->
+    <script src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=95ae3c138c5845289c3d45408fc8839f"></script>
 </head>
 
 <body>
@@ -20,25 +17,15 @@
     <button class="toggle-btn" id="toggleBtn">≡</button>
 
     <ul class="menu">
-
-        <li>
-            <button class="menu-item">🏠 <span>Inicio</span></button>
-        </li>
+        <li><button class="menu-item">🏠 <span>Inicio</span></button></li>
 
         <li class="has-submenu">
-            <button class="menu-item">
-                📘 <span>Métodos</span>
-                <span class="arrow">▸</span>
-            </button>
+            <button class="menu-item">📘 <span>Métodos</span><span class="arrow">▸</span></button>
 
             <ul class="submenu">
 
                 <li class="has-submenu">
-                    <button class="menu-item">
-                        🔒 <span>Cerrados</span>
-                        <span class="arrow">▸</span>
-                    </button>
-
+                    <button class="menu-item">🔒 <span>Cerrados</span><span class="arrow">▸</span></button>
                     <ul class="submenu">
                         <li><button class="menu-item">Bisección</button></li>
                         <li><button class="menu-item">Regla Falsa</button></li>
@@ -46,11 +33,7 @@
                 </li>
 
                 <li class="has-submenu">
-                    <button class="menu-item">
-                        🔓 <span>Abiertos</span>
-                        <span class="arrow">▸</span>
-                    </button>
-
+                    <button class="menu-item">🔓 <span>Abiertos</span><span class="arrow">▸</span></button>
                     <ul class="submenu">
                         <li><button class="menu-item">Newton Raphson</button></li>
                         <li><button class="menu-item">Secante</button></li>
@@ -61,68 +44,24 @@
             </ul>
         </li>
 
-        <li>
-            <button class="menu-item">📈 <span>Taylor</span></button>
-        </li>
-
-        <li>
-            <button class="menu-item">⚙️ <span>Configuración</span></button>
-        </li>
-
+        <li><button class="menu-item">📈 <span>Taylor</span></button></li>
+        <li><button class="menu-item">⚙️ <span>Configuración</span></button></li>
     </ul>
 </div>
 
 <div class="content">
 
-    <h1 class="title">Editor Matemático</h1>
+    <h1 class="title">GeoMath - Calculadora y Graficador</h1>
 
-    <!-- TOOLBAR -->
-    <div class="toolbar">
-        <button onclick="insertCmd('\\frac')">𝒂/𝒃</button>
-        <button onclick="insertCmd('^')">x²</button>
-        <button onclick="insertCmd('\\sqrt')">√</button>
+    <!-- 🧮 CALCULADORA CIENTÍFICA -->
+    <h2>🧮 Calculadora Científica</h2>
+    <div id="cientifica" style="width:100%; height:300px;"></div>
 
-        <div class="divider"></div>
+    <!-- 📊 GRAFICADOR -->
+    <h2 style="margin-top:20px;">📊 Graficador</h2>
+    <div id="grafica" style="width:100%; height:400px;"></div>
 
-        <button onclick="insertCmd('\\pi')">π</button>
-        <button onclick="insertText('e')">e</button>
-
-        <div class="divider"></div>
-
-        <button onclick="insertCmd('\\sin')">sin</button>
-        <button onclick="insertCmd('\\cos')">cos</button>
-        <button onclick="insertCmd('\\tan')">tan</button>
-
-        <div class="divider"></div>
-
-        <button onclick="insertText('x')">x</button>
-        <button onclick="insertText('+')">+</button>
-        <button onclick="insertText('-')">-</button>
-
-        <div class="divider"></div>
-
-        <button class="clear-btn" onclick="clearMath()">C</button>
-    </div>
-
-    <!-- CAMPO MATHQUILL -->
-    <div id="math-field" class="math-box"></div>
-
-    <!-- PANELES -->
-    <div class="panels">
-
-        <div class="panel">
-            <h3>LaTeX</h3>
-            <div id="latex-output"></div>
-        </div>
-
-        <div class="panel">
-            <h3>Vista Matemática</h3>
-            <div id="math-preview"></div>
-        </div>
-
-    </div>
-
-    <!-- TABLA DE ITERACIONES -->
+    <!-- 📋 TABLA -->
     <div class="panel">
         <h3>Iteraciones</h3>
 
@@ -136,8 +75,6 @@
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.min.js"></script>
 <script src="script.js"></script>
 
 </body>
