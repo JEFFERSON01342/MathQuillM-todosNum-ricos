@@ -1,9 +1,11 @@
+/* RESET */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* BODY */
 body {
     display: flex;
     height: 100vh;
@@ -119,6 +121,8 @@ body {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 /* TITULO */
@@ -197,6 +201,42 @@ body {
 }
 
 /* ===================== */
+/* BOTÓN GRAFICAR */
+/* ===================== */
+
+.graph-controls {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.graph-btn {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    background: #22c55e;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.graph-btn:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
+}
+
+/* ===================== */
+/* GRAFICADOR DESMOS */
+/* ===================== */
+
+#grafica {
+    margin-top: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #38bdf8;
+}
+
+/* ===================== */
 /* PANELES */
 /* ===================== */
 
@@ -205,6 +245,7 @@ body {
     gap: 20px;
     margin-top: 20px;
     flex-wrap: wrap;
+    margin-bottom: 30px;
 }
 
 .panel {
@@ -224,17 +265,15 @@ body {
 }
 
 /* ===================== */
-/* TABLA DE ITERACIONES */
+/* TABLA */
 /* ===================== */
 
 .table-container {
-
     margin-top: 15px;
     overflow-x: auto;
 }
 
 table {
-    
     width: 100%;
     border-collapse: collapse;
     background: #1e293b;
@@ -258,15 +297,4 @@ td {
 
 tr:hover {
     background: #334155;
-}
-
-/* CONTENEDOR GENERAL MÁS ORDENADO */
-.content {
-    display: flex;
-    flex-direction: column;
-}
-
-/* SEPARACIÓN ENTRE BLOQUES */
-.panels {
-    margin-bottom: 30px;
 }
