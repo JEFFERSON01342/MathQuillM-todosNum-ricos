@@ -47,7 +47,6 @@ body {
     margin-top: 50px;
 }
 
-/* BOTONES MENU */
 .menu-item {
     width: 100%;
     background: none;
@@ -65,10 +64,6 @@ body {
 .menu-item:hover {
     background: #334155;
     transform: translateX(3px);
-}
-
-.menu-item:active {
-    transform: scale(0.97);
 }
 
 .menu-item.active-btn {
@@ -119,138 +114,67 @@ body {
 
 .content {
     flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+    padding: 15px;
+    overflow: hidden;
 }
 
-/* TITULO */
+/* ===================== */
+/* LAYOUT PRINCIPAL */
+/* ===================== */
+
+.main-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    height: 100%;
+    gap: 15px;
+}
+
+/* IZQUIERDA */
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* DERECHA */
+.right-panel {
+    height: 100%;
+    overflow: hidden;
+}
+
+/* ===================== */
+/* TITULOS */
+/* ===================== */
+
 .title {
-    margin-bottom: 25px;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 600;
 }
 
 /* ===================== */
-/* TOOLBAR */
+/* CAJAS (DESMOS) */
 /* ===================== */
 
-.toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 15px;
-    border-radius: 12px;
-    background: rgba(30, 41, 59, 0.6);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(56, 189, 248, 0.2);
-    margin-bottom: 20px;
-}
-
-.toolbar button {
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    background: rgba(15, 23, 42, 0.8);
-    color: #e2e8f0;
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
-
-.toolbar button:hover {
-    background: #38bdf8;
-    color: #020617;
-    transform: translateY(-2px);
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
-}
-
-.toolbar button:active {
-    transform: scale(0.95);
-}
-
-/* BOTON CLEAR */
-.clear-btn {
-    border-color: #ef4444;
-}
-
-.clear-btn:hover {
-    background: #ef4444;
-    color: white;
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
-}
-
-/* DIVISOR */
-.divider {
-    width: 1px;
-    background: rgba(255,255,255,0.2);
-}
-
-/* ===================== */
-/* MATH FIELD */
-/* ===================== */
-
-.math-box {
-    border: 2px solid #38bdf8;
-    padding: 15px;
-    border-radius: 10px;
-    background: #d1d2d2;
-    color: #0f172a;
-    min-height: 50px;
-    box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
-}
-
-/* ===================== */
-/* BOTÓN GRAFICAR */
-/* ===================== */
-
-.graph-controls {
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
-
-.graph-btn {
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: none;
-    background: #22c55e;
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
-}
-
-.graph-btn:hover {
-    background: #16a34a;
-    transform: translateY(-2px);
-}
-
-/* ===================== */
-/* GRAFICADOR DESMOS */
-/* ===================== */
-
-#grafica {
-    margin-top: 15px;
+.box {
+    height: 280px;
     border-radius: 10px;
     overflow: hidden;
     border: 2px solid #38bdf8;
 }
 
-/* ===================== */
-/* PANELES */
-/* ===================== */
-
-.panels {
-    display: flex;
-    gap: 20px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 30px;
+/* GRAFICA MÁS GRANDE */
+#grafica {
+    height: 400px;
 }
 
+/* ===================== */
+/* PANEL DERECHO */
+/* ===================== */
+
 .panel {
-    flex: 1;
-    min-width: 250px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     background: #1e293b;
     padding: 15px;
     border-radius: 10px;
@@ -260,8 +184,52 @@ body {
     margin-bottom: 10px;
 }
 
-#math-preview {
-    font-size: 22px;
+/* ===================== */
+/* INPUTS MÉTODOS */
+/* ===================== */
+
+.inputs-metodo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Ocultar inicialmente */
+#inputs-metodo div {
+    display: none;
+}
+
+.inputs-metodo input {
+    padding: 6px;
+    border-radius: 6px;
+    border: none;
+    width: 80px;
+    background: #e2e8f0;
+    color: #0f172a;
+    font-weight: bold;
+}
+
+.inputs-metodo label {
+    font-size: 13px;
+    margin-right: 4px;
+}
+
+/* BOTÓN ITERAR */
+#btn-iterar {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    background: #22c55e;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+#btn-iterar:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
 }
 
 /* ===================== */
@@ -269,30 +237,29 @@ body {
 /* ===================== */
 
 .table-container {
-    margin-top: 15px;
-    overflow-x: auto;
+    flex: 1;
+    overflow-y: auto; /* 🔥 SCROLL SOLO AQUÍ */
+    border-radius: 8px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     background: #1e293b;
-    border-radius: 10px;
-    overflow: hidden;
 }
 
 th {
     background: #38bdf8;
     color: #020617;
-    padding: 10px;
-    font-weight: bold;
-    text-align: center;
+    padding: 8px;
+    font-size: 13px;
 }
 
 td {
-    padding: 8px;
+    padding: 6px;
     text-align: center;
     border-top: 1px solid #334155;
+    font-size: 12px;
 }
 
 tr:hover {
