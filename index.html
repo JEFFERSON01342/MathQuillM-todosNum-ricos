@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoMath App</title>
+    <title>GeoMath Pro</title>
 
     <link rel="stylesheet" href="styles.css">
 
@@ -14,116 +14,95 @@
 <body>
 
 <!-- ===================== -->
-<!-- SIDEBAR -->
+<!-- HEADER PRO -->
 <!-- ===================== -->
-<div class="sidebar" id="sidebar">
-    <button class="toggle-btn" id="toggleBtn">≡</button>
-
-    <ul class="menu">
-        <li><button class="menu-item">🏠 <span>Inicio</span></button></li>
-
-        <li class="has-submenu">
-            <button class="menu-item">📘 <span>Métodos</span><span class="arrow">▸</span></button>
-
-            <ul class="submenu">
-
-                <li class="has-submenu">
-                    <button class="menu-item">🔒 <span>Cerrados</span><span class="arrow">▸</span></button>
-                    <ul class="submenu">
-                        <li><button class="menu-item">Bisección</button></li>
-                        <li><button class="menu-item">Regla Falsa</button></li>
-                    </ul>
-                </li>
-
-                <li class="has-submenu">
-                    <button class="menu-item">🔓 <span>Abiertos</span><span class="arrow">▸</span></button>
-                    <ul class="submenu">
-                        <li><button class="menu-item">Newton Raphson</button></li>
-                        <li><button class="menu-item">Secante</button></li>
-                        <li><button class="menu-item">Punto Fijo</button></li>
-                    </ul>
-                </li>
-
-            </ul>
-        </li>
-
-        <li><button class="menu-item">📈 <span>Taylor</span></button></li>
-        <li><button class="menu-item">⚙️ <span>Configuración</span></button></li>
-    </ul>
+<div class="header-pro">
+    <h1>GeoMath</h1>
+    <p>Calculadora numérica + visualización de raíces</p>
 </div>
 
 <!-- ===================== -->
-<!-- CONTENIDO PRINCIPAL -->
+<!-- CONTENEDOR PRINCIPAL -->
 <!-- ===================== -->
-<div class="content">
+<div class="container">
 
-    <div class="main-layout">
+    <!-- ===================== -->
+    <!-- INPUT FUNCIÓN -->
+    <!-- ===================== -->
+    <div class="card">
+        <h2> Escriba su función acá:</h2>
+        <div id="cientifica"></div>
+    </div>
 
-        <!-- ===================== -->
-        <!-- IZQUIERDA -->
-        <!-- ===================== -->
-        <div class="left-panel">
+    <!-- ===================== -->
+    <!-- GRÁFICA -->
+    <!-- ===================== -->
+    <div class="card">
+        <h2> Gráfica de la función</h2>
+        <div id="grafica"></div>
+    </div>
 
-            <h1 class="title">GeoMath - Calculadora y Graficador</h1>
+    <!-- ===================== -->
+    <!-- CONTROLES -->
+    <!-- ===================== -->
+    <div class="card controls">
 
-            <!-- CALCULADORA -->
-            <h2>🧮 Calculadora Científica</h2>
-            <div id="cientifica" class="box"></div>
+        <h2> Método numérico</h2>
 
-            <!-- GRAFICADOR -->
-            <h2>📊 Graficador</h2>
-            <div id="grafica" class="box"></div>
-
+        <div class="selector-metodo">
+            <button class="metodo-btn" data-metodo="biseccion">Bisección</button>
+            <button class="metodo-btn" data-metodo="reglaFalsa">Regla Falsa</button>
+            <button class="metodo-btn" data-metodo="newton">Newton</button>
+            <button class="metodo-btn" data-metodo="secante">Secante</button>
         </div>
 
-        <!-- ===================== -->
-        <!-- DERECHA -->
-        <!-- ===================== -->
-        <div class="right-panel">
+        <div class="inputs-metodo" id="inputs-metodo">
 
-            <div class="panel">
-
-                <h3>Iteraciones</h3>
-
-                <!-- INPUTS DINÁMICOS -->
-                <div class="inputs-metodo" id="inputs-metodo">
-
-                    <div id="input-a-group">
-                        <label>a:</label>
-                        <input type="number" id="input-a">
-                    </div>
-
-                    <div id="input-b-group">
-                        <label>b:</label>
-                        <input type="number" id="input-b">
-                    </div>
-
-                    <div id="input-x0-group">
-                        <label>x₀:</label>
-                        <input type="number" id="input-x0">
-                    </div>
-
-                    <button id="btn-iterar">▶ Iterar</button>
-
-                </div>
-
-                <!-- TABLA -->
-                <div class="table-container">
-                    <table id="tabla-iteraciones">
-                        <thead></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-
+            <div id="input-a-group">
+                <label>a:</label>
+                <input type="number" id="input-a">
             </div>
+
+            <div id="input-b-group">
+                <label>b:</label>
+                <input type="number" id="input-b">
+            </div>
+
+            <div id="input-x0-group">
+                <label>x₀:</label>
+                <input type="number" id="input-x0">
+            </div>
+
+            <button id="btn-iterar">▶ Ejecutar método</button>
 
         </div>
 
     </div>
 
+    <!-- ===================== -->
+    <!-- RESULTADO -->
+    <!-- ===================== -->
+    <div class="card resultado-box" id="resultado-box">
+        <h2> Resultado</h2>
+        <p id="resultado-text">Aquí aparecerá la raíz aproximada...</p>
+    </div>
+
+    <!-- ===================== -->
+    <!-- TABLA -->
+    <!-- ===================== -->
+    <div class="card">
+        <h2> Tabla de iteraciones</h2>
+
+        <div class="table-container">
+            <table id="tabla-iteraciones">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 
-<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
