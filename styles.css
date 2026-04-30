@@ -8,35 +8,79 @@
 }
 
 /* ===================== */
-/* BODY */
+/* BODY (NUEVO ESTILO CLARO) */
 /* ===================== */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: #140808;
-    color: #f1f5f9;
+    background: #ffffff;
+    color: #1f2937;
     line-height: 1.5;
 }
 
 /* ===================== */
-/* HEADER PRO */
+/* HEADER PRO (MEJORADO) */
 /* ===================== */
 .header-pro {
-    background: linear-gradient(135deg, #1f0a0a, #2a0d0d);
-    padding: 20px;
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    padding: 40px 20px 80px;
     text-align: center;
-    border-bottom: 2px solid #7f1d1d;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    color: white;
+    position: relative;
+    overflow: hidden;
 }
 
 .header-pro h1 {
-    font-size: 32px;
-    color: #f87171;
+    font-size: 38px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    animation: glow 2s infinite alternate;
 }
 
 .header-pro p {
-    font-size: 14px;
-    color: #fca5a5;
+    font-size: 15px;
+    opacity: 0.9;
     margin-top: 5px;
+}
+
+.header-pro::after {
+    content: "";
+    position: absolute;
+    bottom: -40px;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+}
+
+/* ===================== */
+/* ANIMACIONES */
+/* ===================== */
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 5px #fff; }
+    to { text-shadow: 0 0 20px #fff; }
 }
 
 /* ===================== */
@@ -49,23 +93,28 @@ body {
     flex-direction: column;
     gap: 20px;
     padding: 10px;
+    animation: fadeUp 0.8s ease;
 }
 
 /* ===================== */
-/* CARDS */
+/* CARDS (MEJORADAS) */
 /* ===================== */
 .card {
-    background: #1f0a0a;
-    border-radius: 14px;
-    padding: 15px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-    border: 1px solid #3f1a1a;
-    transition: all 0.25s ease;
+    background: #ffffff;
+    border-radius: 30px;
+    padding: 18px;
+
+    box-shadow:
+        10px 10px 20px rgba(0,0,0,0.08),
+        -10px -10px 20px #ffffff,
+        0 0 0 6px #ffe4e6;
+
+    transition: 0.3s;
 }
 
 .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
 }
 
 /* ===================== */
@@ -74,7 +123,7 @@ body {
 h2 {
     font-size: 18px;
     margin-bottom: 10px;
-    color: #fca5a5;
+    color: #b91c1c;
 }
 
 /* ===================== */
@@ -85,7 +134,8 @@ h2 {
     border-radius: 12px;
     overflow: hidden;
     padding: 5px;
-    background: #111;
+    background: #fff;
+    border: 2px solid #ef4444;
 }
 
 .dcg-calculator-api-container {
@@ -94,11 +144,12 @@ h2 {
 
 #grafica {
     height: 500px;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
+    border: 2px solid #ef4444;
 }
 
-/* Quitar estilo feo azul */
+/* Quitar estilo azul feo */
 .dc-container {
     border: none !important;
 }
@@ -120,27 +171,30 @@ h2 {
 }
 
 .metodo-btn {
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
     border: none;
-    background: #7f1d1d;
-    color: #fff;
+    background: #fee2e2;
+    color: #991b1b;
     cursor: pointer;
-    transition: 0.2s;
-    font-weight: 500;
+    transition: 0.25s;
+    font-weight: 600;
 }
 
 .metodo-btn:hover {
-    background: #b91c1c;
-    transform: scale(1.05);
+    background: #ef4444;
+    color: white;
+    transform: scale(1.08);
 }
 
 .metodo-btn.activo {
-    background: #ef4444;
+    background: #b91c1c;
     color: white;
 }
 
+/* ===================== */
 /* INPUTS */
+/* ===================== */
 .inputs-metodo {
     display: flex;
     gap: 10px;
@@ -153,30 +207,32 @@ h2 {
 }
 
 .inputs-metodo input {
-    padding: 6px;
-    border-radius: 6px;
-    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
     width: 80px;
-    background: #f1f5f9;
+    background: #fff;
     color: #111;
     font-weight: bold;
 }
 
+/* ===================== */
 /* BOTÓN ITERAR */
+/* ===================== */
 #btn-iterar {
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 10px 18px;
+    border-radius: 10px;
     border: none;
-    background: #ef4444;
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
     color: white;
     cursor: pointer;
-    transition: 0.2s;
+    transition: 0.3s;
     font-weight: bold;
 }
 
 #btn-iterar:hover {
-    background: #dc2626;
-    transform: translateY(-2px);
+    transform: scale(1.07);
+    box-shadow: 0 5px 15px rgba(239,68,68,0.4);
 }
 
 /* ===================== */
@@ -184,14 +240,15 @@ h2 {
 /* ===================== */
 .resultado-box {
     text-align: center;
-    background: #2a0d0d;
-    border: 1px solid #7f1d1d;
+    background: #fff1f2;
+    border: 2px dashed #ef4444;
 }
 
 #resultado-text {
-    font-size: 18px;
-    color: #f87171;
+    font-size: 22px;
+    color: #b91c1c;
     margin-top: 10px;
+    font-weight: bold;
 }
 
 /* ===================== */
@@ -206,32 +263,32 @@ h2 {
 table {
     width: 100%;
     border-collapse: collapse;
-    background: #1f0a0a;
+    background: #ffffff;
 }
 
 th {
     background: #ef4444;
     color: white;
-    padding: 8px;
+    padding: 10px;
     font-size: 13px;
     position: sticky;
     top: 0;
 }
 
 td {
-    padding: 6px;
+    padding: 8px;
     text-align: center;
-    border-top: 1px solid #3f1a1a;
+    border-top: 1px solid #eee;
     font-size: 12px;
 }
 
 /* HOVER */
 tr:hover {
-    background: #3b0f0f;
+    background: #fee2e2;
 }
 
 /* ===================== */
-/* SCROLL PERSONALIZADO */
+/* SCROLL */
 /* ===================== */
 .table-container::-webkit-scrollbar {
     width: 6px;
