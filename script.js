@@ -34,6 +34,9 @@ function crearTabla(tipo) {
         case "secante":
             columnas = ["Iteración","xi-1","xi","f(xi-1)","f(xi)","xi+1","Er%"];
             break;
+        case "puntoFijo":
+            columnas = ["Iteración","xi","g(xi)","Er%","Decisión"];
+            break;
     }
 
     let fila = "<tr>";
@@ -71,6 +74,10 @@ function mostrarInputs(tipo) {
 
         document.querySelector("#input-a-group label").innerText = "x₀:";
         document.querySelector("#input-b-group label").innerText = "x₁:";
+    } 
+    
+    if (tipo === "puntoFijo") {
+        grupoX0.style.display = "block";
     } else {
         document.querySelector("#input-a-group label").innerText = "a:";
         document.querySelector("#input-b-group label").innerText = "b:";
@@ -136,18 +143,68 @@ function convertirLatexAJS(latex) {
 
     let expr = latex;
 
+    // ======================
+    // LIMPIEZA
+    // ======================
     expr = expr.replace(/\\left|\\right/g, '');
+    expr = expr.replace(/\s+/g, '');
+
+    // ======================
+    // LATEX ESPECIAL
+    // ======================
+    expr = expr.replace(/\\cdot/g, '*'); // MUY IMPORTANTE
     expr = expr.replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)');
     expr = expr.replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)');
     expr = expr.replace(/e\^{([^}]*)}/g, 'Math.exp($1)');
 
+    // ======================
+    // FUNCIONES
+    // ======================
     expr = expr.replace(/\\sin/g, 'Math.sin');
     expr = expr.replace(/\\cos/g, 'Math.cos');
     expr = expr.replace(/\\tan/g, 'Math.tan');
     expr = expr.replace(/\\ln/g, 'Math.log');
 
+    // ======================
+    // 🔥 POTENCIAS CORREGIDAS
+    // ======================
+
+    // x^{2} → x^(2)
+    expr = expr.replace(/\^\{([^}]*)\}/g, '^($1)');
+
+    // ahora sí → JS
     expr = expr.replace(/\^/g, '**');
+
+    // ======================
+    // 🔥 MULTIPLICACIÓN IMPLÍCITA
+    // ======================
+
+    // 3x → 3*x
     expr = expr.replace(/(\d)(x)/g, '$1*$2');
+
+    // x2 → x*2
+    expr = expr.replace(/(x)(\d)/g, '$1*$2');
+
+    // xMath → x*Math
+    expr = expr.replace(/(x)(Math\.)/g, '$1*$2');
+
+    // 2Math → 2*Math
+    expr = expr.replace(/(\d)(Math\.)/g, '$1*$2');
+
+    // )x → )*x
+    expr = expr.replace(/\)(x)/g, ')*$1');
+
+    // x( → x*(
+    expr = expr.replace(/(x)\(/g, '$1*(');
+
+    // )( → )*(
+    expr = expr.replace(/\)\(/g, ')*(');
+
+    // ======================
+    // DEBUG (déjalo mientras pruebas)
+    // ======================
+    console.log("LATEX:", latex);
+    console.log("JS FINAL:", expr);
 
     return expr;
 }
@@ -157,8 +214,16 @@ function convertirLatexAJS(latex) {
 // =====================
 function evaluarFuncion(expr, x) {
     try {
-        return Function("x", "return " + expr)(x);
-    } catch {
+        let resultado = Function("x", "return " + expr)(x);
+
+        if (isNaN(resultado) || !isFinite(resultado)) {
+            return NaN;
+        }
+
+        return resultado;
+
+    } catch (e) {
+        console.error("Error:", expr);
         return NaN;
     }
 }
@@ -184,7 +249,10 @@ function metodoBiseccion(latex, a, b) {
     let expr = convertirLatexAJS(latex);
     let fa = evaluarFuncion(expr, a);
     let fb = evaluarFuncion(expr, b);
-
+    if (fa * fb > 0) {
+        alert("El intervalo no encierra una raíz (f(a) y f(b) tienen el mismo signo)");
+        return;
+    }
     let c, fc;
 
     for (let i = 1; i <= 50; i++) {
@@ -236,7 +304,10 @@ function metodoReglaFalsa(latex, a, b) {
     let expr = convertirLatexAJS(latex);
     let fa = evaluarFuncion(expr, a);
     let fb = evaluarFuncion(expr, b);
-
+    if (fa * fb > 0) {
+        alert("El intervalo no encierra una raíz (f(a) y f(b) tienen el mismo signo)");
+        return;
+    }
     let c, fc;
 
     for (let i = 1; i <= 50; i++) {
@@ -359,6 +430,50 @@ function metodoSecante(latex, x0, x1) {
     resultado.innerText = `Raíz ≈ ${xi.toFixed(6)}`;
 }
 
+function metodoPuntoFijo(latex, x0) {
+
+    const tbody = document.querySelector("#tabla-iteraciones tbody");
+    const resultado = document.getElementById("resultado-text");
+
+    tbody.innerHTML = "";
+
+    let expr = convertirLatexAJS(latex);
+
+    let xi = x0;
+    let xi_next;
+
+    for (let i = 1; i <= 50; i++) {
+
+        xi_next = evaluarFuncion(expr, xi);
+
+        if (isNaN(xi_next)) {
+            alert("Error en la función g(x)");
+            return;
+        }
+
+        let error = i === 1 ? "-" : Math.abs((xi_next - xi) / xi_next) * 100;
+
+        // criterio de convergencia
+        let decision = Math.abs(xi_next - xi) < 1e-6 ? "Converge" : "Iterando";
+
+        tbody.innerHTML += `
+        <tr>
+            <td>${i}</td>
+            <td>${xi.toFixed(6)}</td>
+            <td>${xi_next.toFixed(6)}</td>
+            <td>${i === 1 ? "-" : error.toFixed(4)}</td>
+            <td>${decision}</td>
+        </tr>
+        `;
+
+        if (Math.abs(xi_next - xi) < 1e-6) break;
+
+        xi = xi_next;
+    }
+
+    resultado.innerText = `Resultado ≈ ${xi_next.toFixed(6)}`;
+}
+
 // =====================
 // BOTÓN EJECUTAR
 // =====================
@@ -401,5 +516,15 @@ document.getElementById("btn-iterar").addEventListener("click", () => {
         let x0 = parseFloat(document.getElementById("input-a").value);
         let x1 = parseFloat(document.getElementById("input-b").value);
         metodoSecante(latex, x0, x1);
+    }
+
+    if (metodoActual === "puntoFijo") {
+        let x0 = parseFloat(document.getElementById("input-x0").value);
+
+    if (isNaN(x0)) {
+        alert("Ingresa x0");
+        return;
+    }
+        metodoPuntoFijo(latex, x0);
     }
 });
