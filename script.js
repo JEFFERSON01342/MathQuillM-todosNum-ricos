@@ -430,7 +430,8 @@ function metodoSecante(latex, x0, x1) {
     resultado.innerText = `Raíz ≈ ${xi.toFixed(6)}`;
 }
 
-function metodoPuntoFijo(latex, x0) {
+//PUNTO FIJO
+function metodoPuntoFijoAuto(latex, x0) {
 
     const tbody = document.querySelector("#tabla-iteraciones tbody");
     const resultado = document.getElementById("resultado-text");
@@ -438,62 +439,92 @@ function metodoPuntoFijo(latex, x0) {
     tbody.innerHTML = "";
     resultado.innerText = "";
 
-    let expr = convertirLatexAJS(latex);
+    let fexpr = convertirLatexAJS(latex);
 
-    let xi = parseFloat(x0);
+    let candidatas = [
+        `( (${fexpr}) + x )`,
+        `(x - (${fexpr}))`,
+        `(Math.log(Math.abs(${fexpr}) + 1))`
+    ];
+
+    let mejor = null;
+
+    for (let gexpr of candidatas) {
+
+        let xi = x0;
+        let converge = true;
+
+        for (let i = 0; i < 10; i++) {
+            let xi_next = evaluarFuncion(gexpr, xi);
+
+            if (!isFinite(xi_next)) {
+                converge = false;
+                break;
+            }
+
+            if (Math.abs(xi_next - xi) > 1e6) {
+                converge = false;
+                break;
+            }
+
+            xi = xi_next;
+        }
+
+        if (converge) {
+            mejor = gexpr;
+            break;
+        }
+    }
+
+    if (!mejor) {
+        alert("No se encontró una transformación g(x) que converja");
+        return;
+    }
+
+    // 🔥 ahora usa TU método original con la mejor g(x)
+    let xi = x0;
     let xi_next;
 
-    const tolerancia = 1e-6;
-    const maxIter = 50;
+    for (let i = 1; i <= 50; i++) {
 
-    for (let i = 1; i <= maxIter; i++) {
+        xi_next = evaluarFuncion(mejor, xi);
 
-        xi_next = evaluarFuncion(expr, xi);
-
-        // 🔥 Validación fuerte
         if (!isFinite(xi_next)) {
-            alert("Error: la función g(x) diverge o es inválida");
-            resultado.innerText = "Sin resultado";
+            resultado.innerText = "Divergencia";
             return;
         }
 
-        // 🔥 Error absoluto (más estable que el relativo)
-        let error = i === 1 ? null : Math.abs(xi_next - xi);
-
-        // 🔥 criterio de convergencia
-        let converge = error !== null && error < tolerancia;
-
-        let decision = converge ? "Converge" : "Iterando";
+        let error = Math.abs(xi_next - xi);
 
         tbody.innerHTML += `
         <tr>
             <td>${i}</td>
             <td>${xi.toFixed(6)}</td>
             <td>${xi_next.toFixed(6)}</td>
-            <td>${error === null ? "-" : error.toFixed(6)}</td>
-            <td>${decision}</td>
+            <td>${error.toFixed(6)}</td>
+            <td>${error < 1e-6 ? "Converge" : "Iterando"}</td>
         </tr>
         `;
 
-        if (converge) {
-            resultado.innerText = `Resultado ≈ ${xi_next.toFixed(6)} (en ${i} iteraciones)`;
-            return;
-        }
-
-        // 🔥 detección de divergencia (explosión numérica)
-        if (Math.abs(xi_next) > 1e10) {
-            alert("El método diverge (valor demasiado grande)");
-            resultado.innerText = "Divergencia";
+        if (error < 1e-6) {
+            resultado.innerText = `Resultado ≈ ${xi_next.toFixed(6)} usando g(x) = ${mejor}`;
             return;
         }
 
         xi = xi_next;
     }
 
-    // 🔥 Si no converge en el máximo de iteraciones
-    resultado.innerText = "No convergió en 50 iteraciones";
+    resultado.innerText = "No convergió";
 }
 
+//FUNCION GENERARNCANDIDATA
+function generarCandidatas(expr) {
+    return [
+        `( (${expr}) + x )`,                 // x = x + f(x)
+        `(x - (${expr}))`,                   // tipo Newton simplificado
+        `( (${expr}).replace(/x/g, '(${expr})') )` // fallback
+    ];
+}
 // =====================
 // BOTÓN EJECUTAR
 // =====================
