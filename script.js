@@ -441,47 +441,59 @@ function metodoPuntoFijoAuto(latex, x0) {
 
     let fexpr = convertirLatexAJS(latex);
 
+    // 🔥 mejores candidatas (más realistas)
     let candidatas = [
-        `( (${fexpr}) + x )`,
-        `(x - (${fexpr}))`,
-        `(Math.log(Math.abs(${fexpr}) + 1))`
+        `(x - (${fexpr}))`,                        // relajación
+        `(x - 0.5*(${fexpr}))`,                   // amortiguado
+        `(x - 0.1*(${fexpr}))`,                   // más estable
     ];
 
     let mejor = null;
+    let mejorError = Infinity;
 
+    // =====================
+    // 🔍 ELEGIR MEJOR g(x)
+    // =====================
     for (let gexpr of candidatas) {
 
         let xi = x0;
-        let converge = true;
+        let errorTotal = 0;
+        let valido = true;
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 15; i++) {
+
             let xi_next = evaluarFuncion(gexpr, xi);
 
             if (!isFinite(xi_next)) {
-                converge = false;
+                valido = false;
                 break;
             }
 
-            if (Math.abs(xi_next - xi) > 1e6) {
-                converge = false;
+            let error = Math.abs(xi_next - xi);
+            errorTotal += error;
+
+            if (error > 1e5) { // diverge
+                valido = false;
                 break;
             }
 
             xi = xi_next;
         }
 
-        if (converge) {
+        if (valido && errorTotal < mejorError) {
+            mejorError = errorTotal;
             mejor = gexpr;
-            break;
         }
     }
 
     if (!mejor) {
-        alert("No se encontró una transformación g(x) que converja");
+        alert("No se encontró una transformación g(x) estable");
         return;
     }
 
-    // 🔥 ahora usa TU método original con la mejor g(x)
+    // =====================
+    // 🔥 ITERACIÓN FINAL
+    // =====================
     let xi = x0;
     let xi_next;
 
@@ -507,7 +519,8 @@ function metodoPuntoFijoAuto(latex, x0) {
         `;
 
         if (error < 1e-6) {
-            resultado.innerText = `Resultado ≈ ${xi_next.toFixed(6)} usando g(x) = ${mejor}`;
+            resultado.innerText =
+                `Resultado ≈ ${xi_next.toFixed(6)} usando g(x) = ${mejor}`;
             return;
         }
 
