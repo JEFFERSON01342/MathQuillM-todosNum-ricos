@@ -436,42 +436,62 @@ function metodoPuntoFijo(latex, x0) {
     const resultado = document.getElementById("resultado-text");
 
     tbody.innerHTML = "";
+    resultado.innerText = "";
 
     let expr = convertirLatexAJS(latex);
 
-    let xi = x0;
+    let xi = parseFloat(x0);
     let xi_next;
 
-    for (let i = 1; i <= 50; i++) {
+    const tolerancia = 1e-6;
+    const maxIter = 50;
+
+    for (let i = 1; i <= maxIter; i++) {
 
         xi_next = evaluarFuncion(expr, xi);
 
-        if (isNaN(xi_next)) {
-            alert("Error en la función g(x)");
+        // 🔥 Validación fuerte
+        if (!isFinite(xi_next)) {
+            alert("Error: la función g(x) diverge o es inválida");
+            resultado.innerText = "Sin resultado";
             return;
         }
 
-        let error = i === 1 ? "-" : Math.abs((xi_next - xi) / xi_next) * 100;
+        // 🔥 Error absoluto (más estable que el relativo)
+        let error = i === 1 ? null : Math.abs(xi_next - xi);
 
-        // criterio de convergencia
-        let decision = Math.abs(xi_next - xi) < 1e-6 ? "Converge" : "Iterando";
+        // 🔥 criterio de convergencia
+        let converge = error !== null && error < tolerancia;
+
+        let decision = converge ? "Converge" : "Iterando";
 
         tbody.innerHTML += `
         <tr>
             <td>${i}</td>
             <td>${xi.toFixed(6)}</td>
             <td>${xi_next.toFixed(6)}</td>
-            <td>${i === 1 ? "-" : error.toFixed(4)}</td>
+            <td>${error === null ? "-" : error.toFixed(6)}</td>
             <td>${decision}</td>
         </tr>
         `;
 
-        if (Math.abs(xi_next - xi) < 1e-6) break;
+        if (converge) {
+            resultado.innerText = `Resultado ≈ ${xi_next.toFixed(6)} (en ${i} iteraciones)`;
+            return;
+        }
+
+        // 🔥 detección de divergencia (explosión numérica)
+        if (Math.abs(xi_next) > 1e10) {
+            alert("El método diverge (valor demasiado grande)");
+            resultado.innerText = "Divergencia";
+            return;
+        }
 
         xi = xi_next;
     }
 
-    resultado.innerText = `Resultado ≈ ${xi_next.toFixed(6)}`;
+    // 🔥 Si no converge en el máximo de iteraciones
+    resultado.innerText = "No convergió en 50 iteraciones";
 }
 
 // =====================
