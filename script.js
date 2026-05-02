@@ -441,20 +441,18 @@ function metodoPuntoFijoAuto(latex, x0) {
 
     let fexpr = convertirLatexAJS(latex);
 
-    // 🔥 mejores candidatas (más realistas)
-    let candidatas = [
-        `(x - (${fexpr}))`,                        // relajación
-        `(x - 0.5*(${fexpr}))`,                   // amortiguado
-        `(x - 0.1*(${fexpr}))`,                   // más estable
-    ];
+    // 🔥 usar generador real
+    let candidatas = generarCandidatas(fexpr);
 
     let mejor = null;
     let mejorError = Infinity;
 
-    // =====================
+    // ============================
     // 🔍 ELEGIR MEJOR g(x)
-    // =====================
+    // ============================
     for (let gexpr of candidatas) {
+
+        console.log("Probando g(x):", gexpr);
 
         let xi = x0;
         let errorTotal = 0;
@@ -472,7 +470,8 @@ function metodoPuntoFijoAuto(latex, x0) {
             let error = Math.abs(xi_next - xi);
             errorTotal += error;
 
-            if (error > 1e5) { // diverge
+            // 🚨 divergencia
+            if (error > 1e5) {
                 valido = false;
                 break;
             }
@@ -486,14 +485,24 @@ function metodoPuntoFijoAuto(latex, x0) {
         }
     }
 
+    // ============================
+    // ❌ SI NINGUNA SIRVE
+    // ============================
     if (!mejor) {
-        alert("No se encontró una transformación g(x) estable");
+
+        tbody.innerHTML = `
+        <tr>
+            <td colspan="5">No se encontró una g(x) estable</td>
+        </tr>
+        `;
+
+        resultado.innerText = "Prueba con Newton o Bisección";
         return;
     }
 
-    // =====================
+    // ============================
     // 🔥 ITERACIÓN FINAL
-    // =====================
+    // ============================
     let xi = x0;
     let xi_next;
 
@@ -508,13 +517,19 @@ function metodoPuntoFijoAuto(latex, x0) {
 
         let error = Math.abs(xi_next - xi);
 
+        let errorRel = i === 1
+            ? "-"
+            : (Math.abs((xi_next - xi) / xi_next) * 100).toFixed(4);
+
+        let decision = error < 1e-6 ? "Converge" : "Iterando";
+
         tbody.innerHTML += `
         <tr>
             <td>${i}</td>
             <td>${xi.toFixed(6)}</td>
             <td>${xi_next.toFixed(6)}</td>
-            <td>${error.toFixed(6)}</td>
-            <td>${error < 1e-6 ? "Converge" : "Iterando"}</td>
+            <td>${errorRel}</td>
+            <td>${decision}</td>
         </tr>
         `;
 
@@ -524,19 +539,52 @@ function metodoPuntoFijoAuto(latex, x0) {
             return;
         }
 
+        // 🚨 explosión
+        if (Math.abs(xi_next) > 1e10) {
+            resultado.innerText = "Divergencia (explosión numérica)";
+            return;
+        }
+
         xi = xi_next;
     }
 
-    resultado.innerText = "No convergió";
+    resultado.innerText = "No convergió en 50 iteraciones";
 }
 
 //FUNCION GENERARNCANDIDATA
-function generarCandidatas(expr) {
-    return [
-        `( (${expr}) + x )`,                 // x = x + f(x)
-        `(x - (${expr}))`,                   // tipo Newton simplificado
-        `( (${expr}).replace(/x/g, '(${expr})') )` // fallback
-    ];
+function generarCandidatas(fexpr) {
+
+    let candidatas = [];
+
+    // ============================
+    // 🔥 1. RELAJACIÓN (BASE)
+    // ============================
+    let lambdas = [1, 0.5, 0.1, 0.01];
+
+    lambdas.forEach(l => {
+        candidatas.push(`(x - ${l}*(${fexpr}))`);
+    });
+
+    // ============================
+    // 🔥 2. SI HAY x^2 → intentar raíz
+    // ============================
+    if (fexpr.includes("x**2")) {
+        candidatas.push(`Math.sqrt(Math.abs(${fexpr.replace(/x\*\*2/g, "")}))`);
+    }
+
+    // ============================
+    // 🔥 3. SI HAY e^x → intentar log
+    // ============================
+    if (fexpr.includes("Math.exp")) {
+        candidatas.push(`Math.log(Math.abs(${fexpr}) + 1)`);
+    }
+
+    // ============================
+    // 🔥 4. FORMA SUAVIZADA GENERAL
+    // ============================
+    candidatas.push(`(x - (${fexpr})/(Math.abs(${fexpr}) + 1))`);
+
+    return candidatas;
 }
 // =====================
 // BOTÓN EJECUTAR
