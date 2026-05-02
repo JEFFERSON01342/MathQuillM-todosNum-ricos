@@ -589,6 +589,6 @@ document.getElementById("btn-iterar").addEventListener("click", () => {
         alert("Ingresa x0");
         return;
     }
-        metodoPuntoFijo(latex, x0);
+        metodoPuntoFijoAuto(latex, x0);
     }
 });
